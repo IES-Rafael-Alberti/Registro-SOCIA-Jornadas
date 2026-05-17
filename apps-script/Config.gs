@@ -6,8 +6,8 @@
 var CONFIG = {
 
   // ── WireGuard (servidor ya configurado, no tocar) ──────────────
-  WG_ENDPOINT:    'REDACTED_IP_PUBLICA:8822',
-  WG_SERVER_PUBKEY: 'REDACTED_SERVER_PUBKEY',
+  WG_ENDPOINT:    '90.170.5.6:8822',
+  WG_SERVER_PUBKEY: 'V+ehrj/CHD1I23CsYnXKphsGARSZspHGhLzcE4M/GXs=',
   WG_DNS:         '1.1.1.1, 8.8.8.8',
   WG_ALLOWED_IPS: '10.0.3.0/24, 172.17.33.0/24, 172.17.34.0/24, 172.18.1.0/24, 172.31.0.0/24',
   WG_KEEPALIVE:   15,

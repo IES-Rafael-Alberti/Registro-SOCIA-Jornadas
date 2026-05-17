@@ -7,7 +7,7 @@ la contraseña te será facilitada durante las jornadas.
 ### Graylog — Gestión de logs
 Plataforma central de análisis y correlación de eventos de seguridad.
 
-**URL:** [http://REDACTED_IP_OPNSENSE53:9000](http://REDACTED_IP_OPNSENSE53:9000)  
+**URL:** [http://172.17.33.153:9000](http://172.17.33.153:9000)  
 **Usuario:** `analista-SOCIA`
 
 ---
@@ -15,7 +15,7 @@ Plataforma central de análisis y correlación de eventos de seguridad.
 ### Malcolm — Análisis de tráfico de red
 Herramienta de análisis de capturas de red y detección de amenazas.
 
-**URL:** [https://REDACTED_IP_OPNSENSE03](https://REDACTED_IP_OPNSENSE03)  
+**URL:** [https://172.17.33.103](https://172.17.33.103)  
 **Usuario:** `analista-SOCIA`
 
 ---
@@ -23,7 +23,7 @@ Herramienta de análisis de capturas de red y detección de amenazas.
 ### Velociraptor — Respuesta en endpoint
 Plataforma de hunting y respuesta a incidentes en endpoints.
 
-**URL:** [https://REDACTED_IP_OPNSENSE01:8889](https://REDACTED_IP_OPNSENSE01:8889/app/index.html)  
+**URL:** [https://172.17.33.101:8889](https://172.17.33.101:8889/app/index.html)  
 **Usuario:** `analista-SOCIA`
 
 ---
