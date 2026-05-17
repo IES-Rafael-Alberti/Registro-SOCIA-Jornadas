@@ -1,57 +1,60 @@
-# Jornadas Formativas SOCIA — Materiales y sistema de registro
+# Registro SOCIA Jornadas
 
-Repositorio de materiales para las **Jornadas Formativas del Proyecto SOCIA** organizadas por el IES Rafael Alberti (Cádiz).
+Sistema automatizado de registro y distribución de accesos VPN para las **Jornadas Formativas del Proyecto SOCIA** (IES Rafael Alberti, Cádiz).
 
-El Proyecto SOCIA (*Un SOC en tu aula*) forma a profesorado de FP en ciberseguridad, conectando centros educativos con entornos reales de trabajo.
+Cuando un asistente rellena el formulario Google, recibe automáticamente su perfil WireGuard (fichero `.conf` + QR) por email.
 
 ---
 
-## Contenido
+## Cómo funciona
 
-### Carteles y programas
-Programas de las jornadas en formato HTML, PDF y PNG, listos para imprimir o proyectar.
+1. Se generan 50 perfiles WireGuard en OPNsense (`alumno1`–`alumno50`, IPs `10.0.3.101–150`)
+2. Un Google Form recoge nombre, email y centro del asistente
+3. Al enviar, un trigger de Apps Script asigna el primer slot libre y manda el email con el `.conf` adjunto y el QR de conexión
+4. La página `docs/index.html` muestra el QR del formulario para proyectar en pantalla durante la jornada
 
-| Archivo | Descripción |
-|---------|-------------|
-| `programa_jornadas_profesorado/` | Programa de la jornada para profesorado |
-| `programa_jornadas_alumnado/` | Programa de la jornada para alumnado |
-| `Díptico SOCIA.pdf` | Díptico informativo del proyecto |
-| `Informe de necesidades/` | Justificación y memoria de las jornadas |
+---
 
-### Sistema de registro VPN (`vpn-registro/`)
+## Uso
 
-Sistema automatizado para distribuir accesos VPN WireGuard a los asistentes. Cuando un profesor rellena el formulario Google, recibe automáticamente su fichero `.conf` y el QR de conexión por email.
-
-```
-setup_opnsense.py   → crea peers WireGuard en OPNsense
-run.py              → script maestro interactivo (gestiona todo)
-apps-script/        → Google Apps Script (Form + Sheets + email)
-docs/index.html     → página de proyección con QR para pantalla
-```
-
-**Uso rápido:**
 ```bash
-cd vpn-registro/setup
+# Primera vez o nueva edición
+cd setup
+cp .env.example .env      # rellenar con credenciales de OPNsense
+pip install -r requirements.txt
+clasp login               # autenticar Google Apps Script
+
+# Arrancar
 python3 run.py
 ```
 
----
-
-## Infraestructura
-
-- **Firewall/VPN**: OPNsense en `REDACTED_IP_OPNSENSE` (IES Rafael Alberti)
-- **WireGuard**: 50 perfiles alumnoN, IPs `10.0.3.101–150`
-- **Google**: Spreadsheet + Form + Apps Script (trigger automático)
-- **Página QR**: `docs/index.html` — abrir en Chrome + F11 para proyectar
+El script pregunta cuántos perfiles generar y si reemplazar o añadir a los existentes. Al final abre Apps Script en el navegador — ejecutar `setup()` una sola vez para crear la hoja y el formulario.
 
 ---
 
-## Logos y assets
+## Estructura
 
-En `Logos/` están los recursos gráficos del proyecto: logo SOCIA, sello del IES Rafael Alberti y logos de entidades colaboradoras.
+```
+apps-script/          Google Apps Script (Form, Sheets, email corporativo)
+setup/                Scripts de configuración (OPNsense + deploy)
+  run.py              Script maestro interactivo
+  setup_opnsense.py   Gestión de peers WireGuard
+  deploy.py           Deploy a Apps Script vía clasp
+  .env.example        Plantilla de configuración (sin secretos)
+docs/
+  index.html          Página de proyección con QR (generada por run.py)
+assets/
+  SOCIA_logo.png      Logo del proyecto
+instrucciones/
+  infraestructura.md  Plantilla para las instrucciones del email
+```
 
 ---
 
 ## Seguridad
 
-Las claves privadas WireGuard y las credenciales de OPNsense **no se suben al repositorio**. Ver `vpn-registro/setup/.env.example` para la configuración necesaria.
+Las claves privadas WireGuard y las credenciales de OPNsense no se suben al repositorio. Copiar `setup/.env.example` como `setup/.env` y rellenar los valores reales.
+
+---
+
+*Proyecto SOCIA · Un SOC en tu aula*
