@@ -20,6 +20,22 @@
 var SLOTS_DATA = [];
 
 function setup() {
+  var ui = SpreadsheetApp.getUi();
+  var resp = ui.alert(
+    '⚠️ Acción destructiva — setup()',
+    'Esta función va a:\n\n' +
+    '  • Borrar TODOS los datos de la hoja Slots\n' +
+    '  • Crear un NUEVO Google Form\n' +
+    '  • Reinstalar el trigger\n\n' +
+    'Los slots ocupados y los registros existentes se perderán.\n\n' +
+    '¿Confirmas que quieres continuar?',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (resp !== ui.Button.OK) {
+    Logger.log('setup() cancelada por el usuario.');
+    return;
+  }
+
   Logger.log('=== SETUP JORNADAS SOCIA ===');
 
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -178,6 +194,76 @@ function organizarEnCarpeta() {
 
   Logger.log('');
   Logger.log('Todo organizado en: ' + folder.getUrl());
+}
+
+// ── Restaurar hoja Slots sin tocar el formulario ni el trigger ───────────────
+// Usar cuando la hoja queda vacía por accidente. El Form y el trigger siguen igual.
+function restoreSlotsOnly() {
+  var ui = SpreadsheetApp.getUi();
+  var resp = ui.alert(
+    '⚠️ Acción destructiva — restoreSlotsOnly()',
+    'Esta función va a:\n\n' +
+    '  • Borrar el contenido actual de la hoja Slots\n' +
+    '  • Repoblarla con los slots de SLOTS_DATA\n\n' +
+    'Los datos de asignación (nombre, email, libre) se perderán.\n' +
+    'El formulario y el trigger NO se tocan.\n\n' +
+    '¿Confirmas que quieres continuar?',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (resp !== ui.Button.OK) {
+    Logger.log('restoreSlotsOnly() cancelada por el usuario.');
+    return;
+  }
+
+  if (SLOTS_DATA.length === 0) {
+    Logger.log('ERROR: SLOTS_DATA está vacío. Ejecuta run.py primero.');
+    return;
+  }
+
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Slots');
+  if (!sheet) {
+    sheet = ss.insertSheet('Slots');
+  } else {
+    sheet.clearContents();
+    sheet.clearFormats();
+  }
+
+  var headers = ['slot','ip','privkey','pubkey','psk','conf','uuid','libre','nombre','email','centro','enviado_en'];
+  var hRange  = sheet.getRange(1, 1, 1, headers.length);
+  hRange.setValues([headers]);
+  hRange.setFontWeight('bold');
+  hRange.setBackground('#1565c0');
+  hRange.setFontColor('#ffffff');
+  sheet.setFrozenRows(1);
+
+  var dataRows = SLOTS_DATA.map(function(r) {
+    return [r[0],r[1],r[2],r[3],r[4],r[5],r[6],true,'','','',''];
+  });
+  sheet.getRange(2, 1, dataRows.length, headers.length).setValues(dataRows);
+
+  var ruleVerde = SpreadsheetApp.newConditionalFormatRule()
+    .whenFormulaSatisfied('=$H2=TRUE')
+    .setBackground('#c8e6c9')
+    .setRanges([sheet.getRange(2, 1, dataRows.length, 12)])
+    .build();
+  var ruleRojo = SpreadsheetApp.newConditionalFormatRule()
+    .whenFormulaSatisfied('=$H2=FALSE')
+    .setBackground('#ffcdd2')
+    .setRanges([sheet.getRange(2, 1, dataRows.length, 12)])
+    .build();
+  sheet.setConditionalFormatRules([ruleVerde, ruleRojo]);
+
+  sheet.hideColumns(3, 5);
+  sheet.setColumnWidth(1, 90);
+  sheet.setColumnWidth(2, 110);
+  sheet.setColumnWidth(8, 60);
+  sheet.setColumnWidth(9, 180);
+  sheet.setColumnWidth(10, 200);
+  sheet.setColumnWidth(11, 150);
+  sheet.setColumnWidth(12, 160);
+
+  Logger.log('✅ Hoja Slots restaurada con ' + dataRows.length + ' slots (Form y trigger intactos)');
 }
 
 // ── Añadir slots sin resetear la hoja ─────────────────────────────────────────
