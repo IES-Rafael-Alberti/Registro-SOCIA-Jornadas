@@ -55,11 +55,37 @@ var CONFIG = {
   //  └─────────────────────────────────────────────────────────┘
 
   INFRA_HTML: `
-    <p style="color:#e65100;background:#fff3e0;padding:12px;border-radius:6px;border-left:4px solid #ff9800;">
-      ⚠️ <strong>Pendiente:</strong> Rellena esta sección en
-      <code>Config.gs → INFRA_HTML</code> con las instrucciones de tu infraestructura.
-      Edita primero el archivo <em>instrucciones/infraestructura.md</em>.
-    </p>
+    <div style="font-family:Arial,sans-serif;">
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">Una vez conectado a la VPN, tendrás acceso a las siguientes herramientas.
+El usuario de acceso es <strong>analista-SOCIA</strong> en todas ellas;
+la contraseña te será facilitada durante las jornadas.</p>
+<hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
+<h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">Graylog — Gestión de logs</h4>
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">Plataforma central de análisis y correlación de eventos de seguridad.</p>
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="http://REDACTED_IP_OPNSENSE53:9000">http://REDACTED_IP_OPNSENSE53:9000</a><br />
+<strong>Usuario:</strong> <code style="background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:12px;font-family:monospace;">analista-SOCIA</code></p>
+<hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
+<h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">Malcolm — Análisis de tráfico de red</h4>
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">Herramienta de análisis de capturas de red y detección de amenazas.</p>
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="https://REDACTED_IP_OPNSENSE03">https://REDACTED_IP_OPNSENSE03</a><br />
+<strong>Usuario:</strong> <code style="background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:12px;font-family:monospace;">analista-SOCIA</code></p>
+<hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
+<h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">Velociraptor — Respuesta en endpoint</h4>
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">Plataforma de hunting y respuesta a incidentes en endpoints.</p>
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="https://REDACTED_IP_OPNSENSE01:8889/app/index.html">https://REDACTED_IP_OPNSENSE01:8889</a><br />
+<strong>Usuario:</strong> <code style="background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:12px;font-family:monospace;">analista-SOCIA</code></p>
+<hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
+<h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">TheHive — Gestión de casos de IR</h4>
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">Plataforma colaborativa de respuesta a incidentes donde resolveréis
+los casos planteados durante las jornadas.</p>
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><em>El acceso a TheHive se realizará </em><em>por parejas</em><em> y será habilitado directamente durante las sesiones formativas.</em></p>
+<hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
+<blockquote style="margin:12px 0;padding:10px 14px;background:#fff8e1;border-left:4px solid #f59e0b;border-radius:0 4px 4px 0;">
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>Importante:</strong> Estas herramientas son accesibles únicamente
+a través de la VPN. Asegúrate de tener WireGuard activo antes
+de intentar acceder.</p>
+</blockquote>
+</div>
   `
 
 };

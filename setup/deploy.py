@@ -23,6 +23,7 @@ ROOT   = os.path.join(BASE, '..')
 SCRIPT = os.path.join(ROOT, 'apps-script')
 CSV    = os.path.join(BASE, 'slots_vpn.csv')
 CLASP  = os.path.join(ROOT, '.clasp.json')
+INFRA_MD = os.path.join(ROOT, 'instrucciones', 'infraestructura.md')
 
 def run(cmd, cwd=None, capture=True):
     r = subprocess.run(cmd, shell=True, cwd=cwd or ROOT,
@@ -72,6 +73,55 @@ def inject_csv_into_bootstrap():
 
     print(f'✅ {len(rows)} slots inyectados en Bootstrap.gs')
     return original  # para restaurar después del push
+
+def inject_infra_html():
+    """Convierte infraestructura.md a HTML e inyecta en Config.gs → INFRA_HTML."""
+    try:
+        import markdown as md_lib
+    except ImportError:
+        print('  ⚠️  Instala markdown:  pip install markdown  — INFRA_HTML no actualizado')
+        return
+
+    if not os.path.exists(INFRA_MD):
+        print('  ⚠️  instrucciones/infraestructura.md no encontrado — INFRA_HTML no actualizado')
+        return
+
+    with open(INFRA_MD, encoding='utf-8') as f:
+        md_content = f.read()
+
+    raw_html = md_lib.markdown(md_content, extensions=['tables'])
+
+    # Aplicar estilos inline compatibles con clientes de email
+    html = raw_html
+    html = re.sub(r'<h[12]([^>]*)>', r'<h3 style="color:#1a1a1a;font-size:15px;font-weight:bold;margin:16px 0 8px;">', html)
+    html = re.sub(r'</h[12]>', '</h3>', html)
+    html = re.sub(r'<h[34]([^>]*)>', r'<h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">', html)
+    html = re.sub(r'</h[34]>', '</h4>', html)
+    html = re.sub(r'<p>', r'<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">', html)
+    html = re.sub(r'<ul>', r'<ul style="color:#555;font-size:14px;line-height:1.9;margin:0 0 10px;padding-left:20px;">', html)
+    html = re.sub(r'<ol>', r'<ol style="color:#555;font-size:14px;line-height:1.9;margin:0 0 10px;padding-left:20px;">', html)
+    html = re.sub(r'<a ', r'<a style="color:#eb114b;" ', html)
+    html = re.sub(r'<code>', r'<code style="background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:12px;font-family:monospace;">', html)
+    html = re.sub(r'<hr\s*/?>', r'<hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">', html)
+    html = re.sub(r'<blockquote>', r'<blockquote style="margin:12px 0;padding:10px 14px;background:#fff8e1;border-left:4px solid #f59e0b;border-radius:0 4px 4px 0;">', html)
+
+    final_html = f'<div style="font-family:Arial,sans-serif;">\n{html}\n</div>'
+
+    config_path = os.path.join(SCRIPT, 'Config.gs')
+    with open(config_path, encoding='utf-8') as f:
+        config = f.read()
+
+    new_config = re.sub(
+        r'(INFRA_HTML:\s*`).*?(`)',
+        lambda m: m.group(1) + '\n    ' + final_html + '\n  ' + m.group(2),
+        config,
+        flags=re.DOTALL
+    )
+
+    with open(config_path, 'w', encoding='utf-8') as f:
+        f.write(new_config)
+
+    print('✅ INFRA_HTML actualizado desde infraestructura.md')
 
 def restore_bootstrap(original_content):
     """Restaura Bootstrap.gs al placeholder limpio (sin claves reales)."""
@@ -130,6 +180,7 @@ def main():
         sys.exit(1)
 
     original = inject_csv_into_bootstrap()
+    inject_infra_html()
     create_or_load_project()
     push_code()
     restore_bootstrap(original)

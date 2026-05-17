@@ -27,7 +27,8 @@ ROOT   = BASE.parent
 SCRIPT = ROOT / 'apps-script'
 DOCS   = ROOT / 'docs'
 CSV    = BASE / 'slots_vpn.csv'
-CLASP  = ROOT / '.clasp.json'
+CLASP    = ROOT / '.clasp.json'
+INFRA_MD = ROOT / 'instrucciones' / 'infraestructura.md'
 
 # ── Configuración (.env) ───────────────────────────────────────────────────────
 def _load_env():
@@ -205,6 +206,47 @@ def check_clasp():
         sys.exit(1)
     _ok('clasp autenticado')
 
+def _inject_infra_html():
+    """Convierte infraestructura.md a HTML e inyecta en Config.gs → INFRA_HTML."""
+    try:
+        import markdown as md_lib
+    except ImportError:
+        _err('Instala markdown:  pip install markdown  — INFRA_HTML no actualizado')
+        return
+
+    if not INFRA_MD.exists():
+        _info('instrucciones/infraestructura.md no encontrado — INFRA_HTML no actualizado')
+        return
+
+    md_content = INFRA_MD.read_text(encoding='utf-8')
+    raw_html   = md_lib.markdown(md_content, extensions=['tables'])
+
+    html = raw_html
+    html = re.sub(r'<h[12]([^>]*)>', r'<h3 style="color:#1a1a1a;font-size:15px;font-weight:bold;margin:16px 0 8px;">', html)
+    html = re.sub(r'</h[12]>', '</h3>', html)
+    html = re.sub(r'<h[34]([^>]*)>', r'<h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">', html)
+    html = re.sub(r'</h[34]>', '</h4>', html)
+    html = re.sub(r'<p>', r'<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">', html)
+    html = re.sub(r'<ul>', r'<ul style="color:#555;font-size:14px;line-height:1.9;margin:0 0 10px;padding-left:20px;">', html)
+    html = re.sub(r'<ol>', r'<ol style="color:#555;font-size:14px;line-height:1.9;margin:0 0 10px;padding-left:20px;">', html)
+    html = re.sub(r'<a ', r'<a style="color:#eb114b;" ', html)
+    html = re.sub(r'<code>', r'<code style="background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:12px;font-family:monospace;">', html)
+    html = re.sub(r'<hr\s*/?>', r'<hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">', html)
+    html = re.sub(r'<blockquote>', r'<blockquote style="margin:12px 0;padding:10px 14px;background:#fff8e1;border-left:4px solid #f59e0b;border-radius:0 4px 4px 0;">', html)
+
+    final_html  = f'<div style="font-family:Arial,sans-serif;">\n{html}\n</div>'
+    config_path = SCRIPT / 'Config.gs'
+    config      = config_path.read_text(encoding='utf-8')
+
+    new_config = re.sub(
+        r'(INFRA_HTML:\s*`).*?(`)',
+        lambda m: m.group(1) + '\n    ' + final_html + '\n  ' + m.group(2),
+        config,
+        flags=re.DOTALL
+    )
+    config_path.write_text(new_config, encoding='utf-8')
+    _ok('INFRA_HTML actualizado desde infraestructura.md')
+
 def deploy_slots(slots):
     bootstrap = SCRIPT / 'Bootstrap.gs'
     js_rows   = []
@@ -224,6 +266,8 @@ def deploy_slots(slots):
                       lambda m: slots_js, original, flags=re.DOTALL)
     bootstrap.write_text(content, encoding='utf-8')
     _ok(f'{len(slots)} slots inyectados en Bootstrap.gs')
+
+    _inject_infra_html()
 
     if not CLASP.exists():
         print('  📦 Creando proyecto Apps Script...')

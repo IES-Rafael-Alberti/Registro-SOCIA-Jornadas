@@ -77,24 +77,12 @@ var EmailService = {
 '</td></tr>' +
 
 '<tr><td style="padding:0 32px 16px;"><table width="100%" cellpadding="0" cellspacing="0"><tr>' +
-'<td style="padding-right:10px;white-space:nowrap;"><span style="font-size:10px;font-weight:bold;color:#eb114b;letter-spacing:2.5px;text-transform:uppercase;">Instalar en movil</span></td>' +
+'<td style="padding-right:10px;white-space:nowrap;"><span style="font-size:10px;font-weight:bold;color:#eb114b;letter-spacing:2.5px;text-transform:uppercase;">Configurar tu VPN</span></td>' +
 '<td style="border-bottom:1px solid #e8e8e8;">&nbsp;</td>' +
 '</tr></table></td></tr>' +
 
 '<tr><td style="padding:0 32px 24px;">' +
-'<p style="color:#555;margin:0 0 16px;line-height:1.6;font-size:14px;">Instala <strong>WireGuard</strong> desde App Store o Google Play, abre la app, pulsa <strong>+</strong> y escanea este codigo QR:</p>' +
-'<div style="text-align:center;">' +
-'<img src="' + qrUrl + '" width="200" height="200" style="border:2px solid #eb114b;border-radius:8px;display:block;margin:0 auto;" alt="QR WireGuard"/>' +
-'</div>' +
-'<p style="color:#999;font-size:11px;text-align:center;margin:10px 0 0;">Si el QR no carga, usa el archivo <strong>' + slot + '.conf</strong> adjunto.</p>' +
-'</td></tr>' +
-
-'<tr><td style="padding:0 32px 16px;"><table width="100%" cellpadding="0" cellspacing="0"><tr>' +
-'<td style="padding-right:10px;white-space:nowrap;"><span style="font-size:10px;font-weight:bold;color:#eb114b;letter-spacing:2.5px;text-transform:uppercase;">Instalar en ordenador</span></td>' +
-'<td style="border-bottom:1px solid #e8e8e8;">&nbsp;</td>' +
-'</tr></table></td></tr>' +
-
-'<tr><td style="padding:0 32px 24px;">' +
+'<p style="color:#555;margin:0 0 16px;line-height:1.6;font-size:14px;">Instala WireGuard e importa tu perfil para conectarte a la plataforma SOCIA.</p>' +
 '<table width="100%" cellpadding="0" cellspacing="0"><tr>' +
 '<td width="48%" valign="top" style="padding-right:8px;">' +
 '<div style="background:#fafafa;border-radius:4px;padding:16px;border-top:3px solid #eb114b;">' +
@@ -109,8 +97,8 @@ var EmailService = {
 '</td>' +
 '<td width="4%"></td>' +
 '<td width="48%" valign="top" style="padding-left:8px;">' +
-'<div style="background:#fafafa;border-radius:4px;padding:16px;border-top:3px solid #242d3d;">' +
-'<p style="margin:0 0 8px;font-weight:bold;color:#242d3d;font-size:11px;letter-spacing:1px;text-transform:uppercase;">macOS</p>' +
+'<div style="background:#fafafa;border-radius:4px;padding:16px;border-top:3px solid #eb114b;">' +
+'<p style="margin:0 0 8px;font-weight:bold;color:#eb114b;font-size:11px;letter-spacing:1px;text-transform:uppercase;">macOS</p>' +
 '<ol style="margin:0;padding-left:18px;color:#555;font-size:13px;line-height:1.9;">' +
 '<li>Instala <strong>WireGuard</strong> desde Mac App Store</li>' +
 '<li>Abre WireGuard</li>' +
@@ -120,7 +108,7 @@ var EmailService = {
 '</ol></div>' +
 '</td>' +
 '</tr></table>' +
-'<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;"><tr><td style="background:#f5f5f5;border-left:4px solid #242d3d;border-radius:0 4px 4px 0;padding:12px 16px;">' +
+'<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;"><tr><td style="background:rgba(235,17,75,.06);border-left:4px solid #eb114b;border-radius:0 4px 4px 0;padding:12px 16px;">' +
 '<p style="margin:0;font-size:13px;color:#333;">El archivo <strong>' + slot + '.conf</strong> está adjunto a este correo. Es tu perfil VPN personal — no lo compartas.</p>' +
 '</td></tr></table>' +
 '</td></tr>' +
