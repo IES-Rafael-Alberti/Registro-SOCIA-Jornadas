@@ -55,13 +55,13 @@ def _require(key, default=None):
         sys.exit(1)
     return val
 
-OPNSENSE_URL  = _require('OPNSENSE_URL',  'https://REDACTED_IP_OPNSENSE')
-OPNSENSE_USER = _require('OPNSENSE_USER', 'root')
-OPNSENSE_PASS = _require('OPNSENSE_PASS', 'opnsense')
+OPNSENSE_URL  = _require('OPNSENSE_URL')
+OPNSENSE_USER = _require('OPNSENSE_USER')
+OPNSENSE_PASS = _require('OPNSENSE_PASS')
 
-SERVER_UUID   = _require('SERVER_UUID',   'REDACTED_SERVER_UUID')
-SERVER_PUBKEY = _require('SERVER_PUBKEY', 'REDACTED_SERVER_PUBKEY')
-WG_ENDPOINT   = _require('WG_ENDPOINT',  'REDACTED_IP_PUBLICA:8822')
+SERVER_UUID   = _require('SERVER_UUID')
+SERVER_PUBKEY = _require('SERVER_PUBKEY')
+WG_ENDPOINT   = _require('WG_ENDPOINT')
 WG_DNS        = '1.1.1.1, 8.8.8.8'
 WG_KEEPALIVE  = '15'
 

@@ -2,9 +2,9 @@
 # NUNCA subas .env al repositorio
 
 # ── OPNsense ──────────────────────────────────────────────────────
-OPNSENSE_URL=https://<IP_OPNSENSE>
-OPNSENSE_USER=<usuario_opnsense>
-OPNSENSE_PASS=<contraseña_opnsense>
+OPNSENSE_URL=https://REDACTED_IP_OPNSENSE
+OPNSENSE_USER=root
+OPNSENSE_PASS=opnsense
 
 # ── WireGuard (servidor) ───────────────────────────────────────────
 # SERVER_UUID: UUID del servidor WireGuard en OPNsense
@@ -16,4 +16,4 @@ SERVER_UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 SERVER_PUBKEY=<clave_publica_servidor_base64=>
 
 # WG_ENDPOINT: IP:puerto público del servidor WireGuard
-WG_ENDPOINT=<ip_publica>:8822
+WG_ENDPOINT=0.0.0.0:8822
