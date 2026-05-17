@@ -4,6 +4,22 @@
 // ═══════════════════════════════════════════════════════════════════
 
 /**
+ * Crea el menú SOCIA Admin en el spreadsheet al abrirlo.
+ * Desde aquí se ejecutan las funciones administrativas con el contexto correcto.
+ */
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('⚙️ SOCIA Admin')
+    .addItem('Estado de slots',          'estadoSlots')
+    .addSeparator()
+    .addItem('Limpiar asignaciones',     'resetAsignaciones')
+    .addItem('Restaurar hoja Slots',     'restoreSlotsOnly')
+    .addSeparator()
+    .addItem('Setup completo (⚠️)',      'setup')
+    .addToUi();
+}
+
+/**
  * Trigger que se ejecuta cada vez que alguien envía el Google Form.
  * Asigna el primer slot VPN libre y envía el email con la config.
  *

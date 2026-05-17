@@ -322,3 +322,55 @@ function addSlotsToSheet() {
   Logger.log('Anadidos ' + newRows.length + ' nuevos slots (filas ' + startRow + '-' + endRow + ')');
   Logger.log('Total de slots en la hoja: ' + (lastRow - 1 + newRows.length));
 }
+
+// ── Limpiar asignaciones y respuestas del formulario ─────────────────────────
+// Libera todos los slots (libre=TRUE) y borra las respuestas del Form.
+// NO borra los slots ni toca el formulario ni el trigger.
+function resetAsignaciones() {
+  var ui   = SpreadsheetApp.getUi();
+  var resp = ui.alert(
+    '⚠️ Limpiar asignaciones',
+    'Esta función va a:\n\n' +
+    '  • Marcar todos los slots como libre=TRUE\n' +
+    '  • Borrar nombre, email, centro y fecha de cada slot\n' +
+    '  • Eliminar las respuestas del formulario (dejando la cabecera)\n\n' +
+    'Los slots en sí NO se borran. ¿Confirmas?',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (resp !== ui.Button.OK) {
+    Logger.log('resetAsignaciones() cancelada.');
+    return;
+  }
+
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var slots = ss.getSheetByName('Slots');
+
+  if (slots) {
+    var lastRow = slots.getLastRow();
+    if (lastRow > 1) {
+      var numRows = lastRow - 1;
+      // libre = TRUE
+      slots.getRange(2, 8, numRows, 1).setValue(true);
+      // nombre, email, centro, enviado_en = ''
+      slots.getRange(2, 9, numRows, 4).clearContent();
+    }
+    Logger.log('✅ Slots liberados: ' + (lastRow - 1));
+  } else {
+    Logger.log('⚠️ No se encontró la hoja Slots');
+  }
+
+  // Limpiar respuestas del formulario (todas las hojas excepto Slots)
+  var sheets = ss.getSheets();
+  sheets.forEach(function(sheet) {
+    var name = sheet.getName();
+    if (name !== 'Slots') {
+      var lr = sheet.getLastRow();
+      if (lr > 1) {
+        sheet.deleteRows(2, lr - 1);
+        Logger.log('✅ Respuestas borradas en hoja: ' + name);
+      }
+    }
+  });
+
+  ui.alert('✅ Listo', 'Slots liberados y respuestas del formulario eliminadas.', ui.ButtonSet.OK);
+}
