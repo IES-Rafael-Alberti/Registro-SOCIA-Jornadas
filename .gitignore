@@ -1,0 +1,14 @@
+# Datos sensibles — NUNCA subir al repo
+slots_vpn.csv
+*.conf
+setup/.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Entorno local de clasp (vinculado a una cuenta Google concreta)
+.clasp.json
+
+# macOS
+.DS_Store
