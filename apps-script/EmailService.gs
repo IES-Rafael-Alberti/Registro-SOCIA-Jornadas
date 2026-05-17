@@ -36,8 +36,7 @@ var EmailService = {
 '<tr><td style="background:#eb114b;padding:28px 32px 20px;">' +
 '<table width="100%" cellpadding="0" cellspacing="0"><tr>' +
 '<td valign="bottom">' +
-'<div style="font-family:Arial Black,Arial,sans-serif;font-weight:900;font-size:48px;line-height:1;color:#fff;text-transform:uppercase;letter-spacing:-1px;">PROYECTO</div>' +
-'<div style="font-family:Arial Black,Arial,sans-serif;font-weight:900;font-size:60px;line-height:1;color:#fff;text-transform:uppercase;letter-spacing:-1px;margin-top:-4px;">SOCIA</div>' +
+'<div style="font-family:Arial Black,Arial,sans-serif;font-weight:900;font-size:72px;line-height:1;color:#fff;text-transform:uppercase;letter-spacing:-1px;">SOCIA</div>' +
 '<div style="font-size:14px;color:rgba(255,255,255,.88);margin-top:8px;font-style:italic;">Un SOC en tu aula</div>' +
 '</td>' +
 '<td width="90" align="right" valign="middle">' +
@@ -52,7 +51,7 @@ var EmailService = {
 
 '<tr><td style="padding:28px 32px 16px;">' +
 '<p style="font-size:17px;color:#1a1a1a;margin:0 0 10px;"><strong>Hola ' + primerNombre + ',</strong></p>' +
-'<p style="color:#555;line-height:1.7;margin:0;font-size:14px;">Tu perfil VPN ha sido configurado para las Jornadas Formativas SOCIA. Con el podras acceder a los recursos de la red del centro desde cualquier dispositivo.</p>' +
+'<p style="color:#555;line-height:1.7;margin:0;font-size:14px;">Tu acceso a la plataforma SOCIA está listo. En este correo encontrarás tu perfil VPN personal y los pasos para conectarte.</p>' +
 '</td></tr>' +
 
 '<tr><td style="padding:0 32px 16px;"><table width="100%" cellpadding="0" cellspacing="0"><tr>' +
@@ -121,6 +120,9 @@ var EmailService = {
 '</ol></div>' +
 '</td>' +
 '</tr></table>' +
+'<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;"><tr><td style="background:#f5f5f5;border-left:4px solid #242d3d;border-radius:0 4px 4px 0;padding:12px 16px;">' +
+'<p style="margin:0;font-size:13px;color:#333;">El archivo <strong>' + slot + '.conf</strong> está adjunto a este correo. Es tu perfil VPN personal — no lo compartas.</p>' +
+'</td></tr></table>' +
 '</td></tr>' +
 
 '<tr><td style="padding:0 32px 16px;"><table width="100%" cellpadding="0" cellspacing="0"><tr>' +
@@ -133,7 +135,7 @@ CONFIG.INFRA_HTML +
 '</td></tr>' +
 
 '<tr><td style="background:#242d3d;padding:18px 32px;text-align:center;">' +
-'<p style="color:#eb114b;font-size:10px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 4px;">PROYECTO SOCIA &middot; IES Rafael Alberti</p>' +
+'<p style="color:#eb114b;font-size:10px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 4px;">Plataforma SOCIA &middot; IES Rafael Alberti</p>' +
 '<p style="color:rgba(255,255,255,.5);font-size:11px;margin:0;">Este mensaje es automatico. Contacta con el equipo tecnico si tienes problemas de conexion.</p>' +
 '</td></tr>' +
 
