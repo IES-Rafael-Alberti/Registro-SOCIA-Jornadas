@@ -174,6 +174,13 @@ class OPNsenseClient:
         except Exception:
             return {'status': resp.status_code, 'text': resp.text[:200]}
 
+    def search_alumno_clients(self):
+        result = self._post('/api/wireguard/client/searchClient',
+                            {'current': 1, 'rowCount': 200})
+        return [(r['name'], r['uuid'])
+                for r in result.get('rows', [])
+                if r.get('name', '').startswith('alumno')]
+
     def delete_client(self, uuid, name):
         result = self._post(f'/api/wireguard/client/delClient/{uuid}')
         ok = result.get('result') == 'deleted' or 'deleted' in str(result)
@@ -228,15 +235,15 @@ def main():
     if not args.dry_run:
         opn = OPNsenseClient(OPNSENSE_URL, OPNSENSE_USER, OPNSENSE_PASS)
 
-    # Paso 2: Borrar alumno1-12
-    print(f'\n🗑️  Borrando {len(ALUMNO_DELETE)} peers existentes...')
+    # Paso 2: Descubrir y borrar todos los peers alumno* existentes
     if not args.dry_run:
-        for name, uuid in ALUMNO_DELETE.items():
+        existing = opn.search_alumno_clients()
+        print(f'\n🗑️  Encontrados {len(existing)} peers alumno* existentes — borrando...')
+        for name, uuid in existing:
             opn.delete_client(uuid, name)
             time.sleep(0.4)
     else:
-        for name in ALUMNO_DELETE:
-            print(f'  [DRY] Borraría {name}')
+        print(f'\n🗑️  [DRY] Descubriría y borraría todos los peers alumno* existentes')
 
     # Paso 3: Generar y crear 50 slots
     print(f'\n🔑 Generando 50 keypairs y creando peers...')

@@ -1,5 +1,6 @@
 # Datos sensibles — NUNCA subir al repo
 slots_vpn.csv
+slots_team.csv
 *.conf
 setup/.env
 

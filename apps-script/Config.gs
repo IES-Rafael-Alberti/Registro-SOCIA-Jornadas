@@ -62,17 +62,17 @@ la contraseña te será facilitada durante las jornadas.</p>
 <hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
 <h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">Graylog — Gestión de logs</h4>
 <p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">Plataforma central de análisis y correlación de eventos de seguridad.</p>
-<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="http://REDACTED_IP_OPNSENSE53:9000">http://REDACTED_IP_OPNSENSE53:9000</a><br />
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="http://172.17.33.153:9000">http://172.17.33.153:9000</a><br />
 <strong>Usuario:</strong> <code style="background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:12px;font-family:monospace;">analista-SOCIA</code></p>
 <hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
 <h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">Malcolm — Análisis de tráfico de red</h4>
 <p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">Herramienta de análisis de capturas de red y detección de amenazas.</p>
-<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="https://REDACTED_IP_OPNSENSE03">https://REDACTED_IP_OPNSENSE03</a><br />
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="https://172.17.33.103">https://172.17.33.103</a><br />
 <strong>Usuario:</strong> <code style="background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:12px;font-family:monospace;">analista-SOCIA</code></p>
 <hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
 <h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">Velociraptor — Respuesta en endpoint</h4>
 <p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;">Plataforma de hunting y respuesta a incidentes en endpoints.</p>
-<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="https://REDACTED_IP_OPNSENSE01:8889/app/index.html">https://REDACTED_IP_OPNSENSE01:8889</a><br />
+<p style="color:#555;font-size:14px;line-height:1.7;margin:0 0 10px;"><strong>URL:</strong> <a style="color:#eb114b;" href="https://172.17.33.101:8889/app/index.html">https://172.17.33.101:8889</a><br />
 <strong>Usuario:</strong> <code style="background:#f5f5f5;padding:2px 5px;border-radius:3px;font-size:12px;font-family:monospace;">analista-SOCIA</code></p>
 <hr style="border:none;border-top:1px solid #e8e8e8;margin:16px 0;">
 <h4 style="color:#1a1a1a;font-size:14px;font-weight:bold;margin:12px 0 6px;">TheHive — Gestión de casos de IR</h4>

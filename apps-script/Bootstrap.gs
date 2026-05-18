@@ -199,20 +199,25 @@ function organizarEnCarpeta() {
 // ── Restaurar hoja Slots sin tocar el formulario ni el trigger ───────────────
 // Usar cuando la hoja queda vacía por accidente. El Form y el trigger siguen igual.
 function restoreSlotsOnly() {
-  var ui = SpreadsheetApp.getUi();
-  var resp = ui.alert(
-    '⚠️ Acción destructiva — restoreSlotsOnly()',
-    'Esta función va a:\n\n' +
-    '  • Borrar el contenido actual de la hoja Slots\n' +
-    '  • Repoblarla con los slots de SLOTS_DATA\n\n' +
-    'Los datos de asignación (nombre, email, libre) se perderán.\n' +
-    'El formulario y el trigger NO se tocan.\n\n' +
-    '¿Confirmas que quieres continuar?',
-    ui.ButtonSet.OK_CANCEL
-  );
-  if (resp !== ui.Button.OK) {
-    Logger.log('restoreSlotsOnly() cancelada por el usuario.');
-    return;
+  try {
+    var ui = SpreadsheetApp.getUi();
+    var resp = ui.alert(
+      '⚠️ Acción destructiva — restoreSlotsOnly()',
+      'Esta función va a:\n\n' +
+      '  • Borrar el contenido actual de la hoja Slots\n' +
+      '  • Repoblarla con los slots de SLOTS_DATA\n\n' +
+      'Los datos de asignación (nombre, email, libre) se perderán.\n' +
+      'El formulario y el trigger NO se tocan.\n\n' +
+      '¿Confirmas que quieres continuar?',
+      ui.ButtonSet.OK_CANCEL
+    );
+    if (resp !== ui.Button.OK) {
+      Logger.log('restoreSlotsOnly() cancelada por el usuario.');
+      return;
+    }
+  } catch(e) {
+    // Ejecutado desde el editor — se omite la confirmación visual
+    Logger.log('restoreSlotsOnly() ejecutada desde el editor (sin confirmación UI).');
   }
 
   if (SLOTS_DATA.length === 0) {

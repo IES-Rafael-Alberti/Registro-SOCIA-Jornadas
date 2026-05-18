@@ -2,21 +2,45 @@
 
 Sistema automatizado de registro y distribución de accesos VPN para las **Jornadas Formativas del Proyecto SOCIA** (IES Rafael Alberti, Cádiz).
 
-Cuando un asistente rellena el formulario Google, recibe automáticamente su perfil WireGuard (fichero `.conf` + QR de conexión) por email.
+Hay dos modos de uso según cómo se organice la jornada:
+
+| Modo | Quién rellena el form | Qué recibe cada persona |
+|------|----------------------|-------------------------|
+| **Individual** | Cada asistente por separado | Su propio `.conf` WireGuard |
+| **Equipos** | Un representante por equipo (2 personas) | Cada integrante recibe su `.conf` individual + la URL de TheHive compartida del equipo |
 
 ---
 
-## Cómo funciona
+## Cómo funciona — modo individual
 
 ```
-Asistente rellena el Form
+Asistente rellena el Form (nombre, email, centro)
         ↓
 Apps Script detecta el envío
         ↓
 Asigna el primer slot libre de la hoja Slots
         ↓
-Envía el email con el .conf adjunto y el QR
+Envía el email con el .conf adjunto y el QR de WireGuard
 ```
+
+## Cómo funciona — modo equipos
+
+```
+Un integrante rellena el Form con los datos de ambos miembros
+        ↓
+Apps Script detecta el envío
+        ↓
+Asigna el primer slot libre de Slots_Equipos (2 perfiles VPN, uno por miembro)
+        ↓
+Asigna la primera URL TheHive libre de la hoja TheHive (compartida por el equipo)
+        ↓
+Envía un email individual a cada integrante con:
+  - Su .conf WireGuard personal (IPs distintas para cada miembro)
+  - El nombre y email de su compañero/a
+  - La URL de TheHive compartida por el equipo
+```
+
+> El formulario lo rellena **una sola persona por equipo**. Cada integrante recibe su propio perfil VPN, pero ambos comparten la misma instancia de TheHive (con dos usuarios: `analista1` / `analista2`).
 
 ---
 
@@ -60,60 +84,107 @@ clasp login
 
 ---
 
+## Modos de uso
+
+El sistema tiene dos modos según cómo se organice la jornada:
+
+| Modo | Script | Descripción |
+|------|--------|-------------|
+| **Individual** | `setup/run.py` | Un perfil VPN por asistente |
+| **Equipos** | `setup/run_team.py` | Un perfil VPN compartido por equipo (2 miembros) + URL TheHive |
+
+---
+
 ## Preparar una jornada
 
 ### Paso 1 — Ejecutar el script principal
+
+**Modo individual:**
 
 ```bash
 python3 setup/run.py
 ```
 
-El script hace todo de forma interactiva:
+**Modo equipos:**
 
-1. Se conecta a OPNsense y detecta los peers WireGuard existentes
-2. Pregunta cuántos perfiles quieres generar
-3. Pregunta si quieres **añadir** perfiles a los existentes o **reemplazar** todos
-   - **Reemplazar**: borra todos los peers `alumnoN` y crea N nuevos desde `alumno1`
+```bash
+python3 setup/run_team.py
+```
+
+Ambos scripts son interactivos y hacen todo de forma automática:
+
+1. Se conectan a OPNsense y detectan los peers WireGuard existentes
+2. Preguntan cuántos perfiles (o equipos) quieres generar
+3. Preguntan si quieres **añadir** o **reemplazar** los peers existentes
+   - **Reemplazar**: borra todos los peers `alumnoN` / `equipoN` y crea N nuevos desde `1`
    - **Añadir**: mantiene los existentes y crea nuevos a partir del último
-4. Crea los peers en OPNsense y recarga WireGuard
-5. Exporta los perfiles a `setup/slots_vpn.csv`
-6. Sube el código a Google Apps Script con los datos de los slots
-7. Genera `docs/index.html` con el QR del formulario para proyectar en pantalla
+4. Crean los peers en OPNsense y recargan WireGuard
+5. Exportan los perfiles a `setup/slots_vpn.csv` o `setup/slots_team.csv`
+6. Suben el código a Google Apps Script con los datos de los slots
+7. Generan `docs/index.html` o `docs/index_team.html` con el QR del formulario
 
 ### Paso 2 — Configurar Apps Script (solo si es la primera vez o se ha reseteado)
 
-Tras el deploy, abrir Apps Script en el navegador y ejecutar la función **`setup()`**:
+Tras el deploy, abrir Apps Script en el navegador y ejecutar la función de setup correspondiente:
 
-- Crea la pestaña **Slots** en el Google Sheet con todos los perfiles
+**Modo individual — `setup()`:**
+- Crea la pestaña **Slots** con todos los perfiles
 - Crea el **Google Form** con los campos nombre, email y centro
-- Instala el **trigger** automático que envía el email al recibir cada respuesta
+- Instala el trigger `onFormSubmit`
 
 > ⚠️ `setup()` borra y recrea la hoja Slots. Solo ejecutarla si es la primera vez o si quieres resetear todo. Pedirá confirmación antes de continuar.
 
+**Modo equipos — `setupTeam()`:**
+- Crea la hoja **Slots_Equipos** con los perfiles (2 VPN por fila, una por miembro)
+- Crea la hoja **TheHive** y la puebla automáticamente con las URLs de las instancias (puertos 9101–9150)
+- Crea el **Google Form** de equipos con los campos de ambos integrantes
+- Instala el trigger `onFormSubmitTeam`
+- Mueve el spreadsheet y el formulario a la carpeta "VPN Jornadas SOCIA" en Drive
+
+> ⚠️ `setupTeam()` es destructiva: borra y recrea las hojas y el formulario. Pedirá confirmación antes de continuar.
+
 ### Paso 3 — Proyectar el QR
 
-Abrir `docs/index.html` en el navegador (o usar la GitHub Page del repo) y proyectar en pantalla para que los asistentes escaneen y accedan al formulario.
+Abrir `docs/index.html` (modo individual) o `docs/index_team.html` (modo equipos) en el navegador y proyectar en pantalla para que los asistentes escaneen el QR.
 
 ---
 
 ## Durante la jornada
 
-El sistema funciona de forma completamente automática:
+El sistema funciona de forma completamente automática.
 
+**Modo individual:**
 1. El asistente escanea el QR y rellena el formulario (nombre, email, centro)
-2. Apps Script detecta el envío en tiempo real
-3. Asigna el primer slot libre y lo marca como ocupado
-4. Envía el email con el fichero `.conf` adjunto y el QR de WireGuard
+2. Apps Script asigna el primer slot libre y lo marca como ocupado
+3. Envía el email con el `.conf` adjunto y el QR de WireGuard
 
-Sin slots libres, el sistema avisa automáticamente al administrador por email.
+**Modo equipos:**
+1. Un integrante del equipo escanea el QR y rellena el formulario con los datos de los dos miembros
+2. Apps Script busca el primer slot libre en `Slots_Equipos` y la primera URL libre en `TheHive`
+3. Marca ambos recursos como ocupados y registra los datos del equipo
+4. Envía un email individual a cada integrante con su `.conf` personal y la URL de TheHive compartida
+
+En ambos modos, si no quedan recursos libres el sistema avisa automáticamente al administrador por email.
+
+---
+
+## Menú de administración (modo equipos)
+
+El spreadsheet de equipos incluye un menú **⚙️ SOCIA Admin — Equipos** con estas opciones:
+
+- **Estado de equipos** — muestra cuántos slots VPN y cuántas URLs TheHive quedan disponibles
+- **Limpiar asignaciones** — libera todos los slots y URLs (útil entre jornadas o en pruebas) sin tocar el formulario ni los perfiles VPN
+- **Setup completo** — recrea todo desde cero (destructivo, pide confirmación)
 
 ---
 
 ## Restaurar la hoja Slots sin tocar el formulario
 
-Si la hoja Slots queda vacía por accidente, ejecutar en Apps Script la función **`restoreSlotsOnly()`**. Repuebla la hoja con los slots actuales sin tocar el formulario ni el trigger.
+**Modo individual:** ejecutar `restoreSlotsOnly()` en Apps Script. Repuebla la hoja Slots con los slots actuales sin tocar el formulario ni el trigger.
 
 Requiere haber hecho un deploy previo con `python3 setup/run.py` o `python3 setup/deploy.py`.
+
+**Modo equipos:** usar la opción **Limpiar asignaciones** del menú de administración para resetear entre jornadas, o `setupTeam()` para una recreación completa.
 
 ---
 
@@ -130,27 +201,39 @@ Inyecta el CSV existente en Bootstrap.gs, sube el código a Apps Script y restau
 ## Estructura del proyecto
 
 ```
-apps-script/
-  Bootstrap.gs        Datos de slots + funciones de setup y restauración
-  Code.gs             Trigger onFormSubmit y lógica principal
-  Config.gs           Configuración (asunto, columnas, HTML de infraestructura)
-  EmailService.gs     Construcción y envío del email corporativo
-  appsscript.json     Manifiesto del proyecto Apps Script
+apps-script/                    Modo individual
+  Bootstrap.gs                  Datos de slots + funciones de setup y restauración
+  Code.gs                       Trigger onFormSubmit y lógica principal
+  Config.gs                     Configuración (asunto, columnas, HTML de infraestructura)
+  EmailService.gs               Construcción y envío del email corporativo
+  appsscript.json               Manifiesto del proyecto Apps Script
+
+apps-script-team/               Modo equipos
+  Bootstrap_team.gs             Datos de slots (equipos + URLs TheHive)
+  Code_team.gs                  Trigger onFormSubmit para equipos
+  Config_team.gs                Configuración del modo equipos
+  EmailService_team.gs          Email con perfiles de 2 miembros por equipo
+  appsscript.json               Manifiesto del proyecto Apps Script
 
 setup/
-  run.py              Script maestro interactivo (OPNsense + deploy + QR)
-  deploy.py           Deploy a Apps Script sin tocar OPNsense
-  setup_opnsense.py   Cliente de la API de OPNsense
-  requirements.txt    Dependencias Python
-  .env.example        Plantilla de credenciales (sin secretos)
-  slots_vpn.csv       Perfiles generados (ignorado por git)
+  run.py                        Script maestro interactivo — modo individual
+  run_team.py                   Script maestro interactivo — modo equipos
+  deploy.py                     Deploy a Apps Script sin tocar OPNsense
+  vpn_utils.py                  Utilidades compartidas (OPNsense, UI, crypto)
+  setup_opnsense.py             Cliente de la API de OPNsense
+  requirements.txt              Dependencias Python
+  .env.example                  Plantilla de credenciales (sin secretos)
+  slots_vpn.csv                 Perfiles individuales generados (ignorado por git)
+  slots_team.csv                Perfiles de equipos generados (ignorado por git)
 
 docs/
-  index.html          Página de proyección con QR (generada por run.py)
-  .nojekyll           Necesario para GitHub Pages
+  index.html                    Página de proyección con QR — modo individual
+  index_team.html               Página de proyección con QR — modo equipos
+  .nojekyll                     Necesario para GitHub Pages
 
 instrucciones/
-  infraestructura.md  Texto de instrucciones que aparece en el email
+  infraestructura.md            Instrucciones en el email — modo individual
+  infraestructura_team.md       Instrucciones en el email — modo equipos
 ```
 
 ---
