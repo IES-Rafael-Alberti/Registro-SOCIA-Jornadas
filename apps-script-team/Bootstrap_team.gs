@@ -212,9 +212,8 @@ function setupTeam() {
 
   form.setTitle('Registro de Equipo — Jornadas Formativas SOCIA');
   form.setDescription(
-    '⚠️ IMPORTANTE: Solo hay que enviar UN formulario por equipo. ' +
-    'Rellena los datos de los DOS integrantes antes de enviarlo.\n\n' +
-    'Cada integrante recibirá su configuración VPN por email, junto con las instrucciones de acceso a la plataforma.'
+    '⚠️ Este formulario es para equipos de DOS personas. Rellena los datos de ambos integrantes antes de enviarlo — solo hay que enviar uno por pareja.\n\n' +
+    'Cada integrante recibirá su configuración VPN por email, junto con las instrucciones de acceso a las diferentes herramientas que se usarán.'
   );
   form.setCollectEmail(false);
   form.setLimitOneResponsePerUser(false);
@@ -223,10 +222,6 @@ function setupTeam() {
     '✅ ¡Equipo registrado! Cada integrante recibirá en breve un email con su configuración VPN. ' +
     'Revisad también la carpeta de spam.'
   );
-
-  form.addTextItem()
-    .setTitle('Nombre del equipo')
-    .setRequired(true);
 
   // ── Integrante 1 ──────────────────────────────────────────────
   form.addSectionHeaderItem()
@@ -267,9 +262,15 @@ function setupTeam() {
     .setRequired(true);
 
   // ── 6. Vincular Form → Spreadsheet (solo si es nuevo) ─────────
+  var responseSheetName = null;
   if (formIsNew) {
+    var sheetsBefore = ss.getSheets().map(function(s) { return s.getName(); });
     form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
-    Logger.log('✅ Form nuevo creado y vinculado al spreadsheet');
+    SpreadsheetApp.flush();
+    ss.getSheets().forEach(function(s) {
+      if (sheetsBefore.indexOf(s.getName()) === -1) responseSheetName = s.getName();
+    });
+    Logger.log('✅ Form nuevo vinculado — hoja de respuestas: ' + responseSheetName);
   } else {
     Logger.log('✅ Form actualizado (sin nueva hoja de respuestas)');
   }
@@ -278,6 +279,7 @@ function setupTeam() {
   // removeDestination() ya eliminó las hojas de forms antiguos automáticamente;
   // por si queda algún residuo, borramos todo excepto las hojas de datos
   var keepSheets = [CONFIG_TEAM.SHEET_SLOTS, CONFIG_TEAM.SHEET_THEHIVE];
+  if (responseSheetName) keepSheets.push(responseSheetName);
   var extraSheets = ss.getSheets().filter(function(s) {
     return keepSheets.indexOf(s.getName()) === -1;
   });

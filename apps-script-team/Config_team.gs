@@ -50,13 +50,12 @@ var CONFIG_TEAM = {
   // ── Campos del formulario (posición en e.values[]) ─────────────
   // 0 = timestamp, luego en orden del form
   // Los SectionHeaderItem no generan valor — solo los campos de texto
-  FORM_NOMBRE_EQUIPO: 1,
-  FORM_NOMBRE_M1:     2,
-  FORM_EMAIL_M1:      3,
-  FORM_CENTRO_M1:     4,
-  FORM_NOMBRE_M2:     5,
-  FORM_EMAIL_M2:      6,
-  FORM_CENTRO_M2:     7,
+  FORM_NOMBRE_M1:     1,
+  FORM_EMAIL_M1:      2,
+  FORM_CENTRO_M1:     3,
+  FORM_NOMBRE_M2:     4,
+  FORM_EMAIL_M2:      5,
+  FORM_CENTRO_M2:     6,
 
   // ── Instrucciones de infraestructura ──────────────────────────
   INFRA_HTML: `

@@ -29,9 +29,8 @@ function onFormSubmitTeam(e) {
   }
 
   try {
-    var values       = e.values;
-    var nombreEquipo = values[CONFIG_TEAM.FORM_NOMBRE_EQUIPO] || '';
-    var nombreM1     = values[CONFIG_TEAM.FORM_NOMBRE_M1]     || '';
+    var values   = e.values;
+    var nombreM1 = values[CONFIG_TEAM.FORM_NOMBRE_M1] || '';
     var emailM1      = values[CONFIG_TEAM.FORM_EMAIL_M1]      || '';
     var centroM1     = values[CONFIG_TEAM.FORM_CENTRO_M1]     || '';
     var nombreM2     = values[CONFIG_TEAM.FORM_NOMBRE_M2]     || '';
@@ -66,10 +65,9 @@ function onFormSubmitTeam(e) {
       GmailApp.sendEmail(
         CONFIG_TEAM.ADMIN_EMAIL,
         '⚠️ Sin slots de equipo disponibles — Jornadas SOCIA',
-        'El equipo "' + nombreEquipo + '" (' + emailM1 + ', ' + emailM2 + ') ' +
-        'intentó registrarse pero no quedan slots libres.'
+        'Intento de registro sin slots libres: ' + emailM1 + ', ' + emailM2
       );
-      Logger.log('Sin slots de equipo libres para: ' + nombreEquipo);
+      Logger.log('Sin slots de equipo libres para: ' + emailM1 + ', ' + emailM2);
       return;
     }
 
@@ -91,10 +89,10 @@ function onFormSubmitTeam(e) {
       GmailApp.sendEmail(
         CONFIG_TEAM.ADMIN_EMAIL,
         '⚠️ Sin URLs TheHive disponibles — Jornadas SOCIA',
-        'El equipo "' + nombreEquipo + '" se registró pero no quedan URLs TheHive libres.\n' +
+        'Equipo (' + emailM1 + ', ' + emailM2 + ') registrado pero sin URLs TheHive libres.\n' +
         'Añade más URLs a la hoja TheHive.'
       );
-      Logger.log('Sin URLs TheHive libres para: ' + nombreEquipo);
+      Logger.log('Sin URLs TheHive libres para: ' + emailM1 + ', ' + emailM2);
       return;
     }
 
@@ -110,7 +108,6 @@ function onFormSubmitTeam(e) {
 
     // ── Marcar slot como ocupado ───────────────────────────────
     slotsSheet.getRange(slotRow, CONFIG_TEAM.COL_LIBRE).setValue(false);
-    slotsSheet.getRange(slotRow, CONFIG_TEAM.COL_NOMBRE_EQUIPO).setValue(nombreEquipo);
     slotsSheet.getRange(slotRow, CONFIG_TEAM.COL_NOMBRE_M1).setValue(nombreM1);
     slotsSheet.getRange(slotRow, CONFIG_TEAM.COL_EMAIL_M1).setValue(emailM1);
     slotsSheet.getRange(slotRow, CONFIG_TEAM.COL_CENTRO_M1).setValue(centroM1);
@@ -122,14 +119,14 @@ function onFormSubmitTeam(e) {
 
     // ── Marcar URL TheHive como ocupada ────────────────────────
     thSheet.getRange(thRow, CONFIG_TEAM.COL_TH_LIBRE).setValue(false);
-    thSheet.getRange(thRow, CONFIG_TEAM.COL_TH_EQUIPO).setValue(nombreEquipo);
+    thSheet.getRange(thRow, CONFIG_TEAM.COL_TH_EQUIPO).setValue(equipo);
     thSheet.getRange(thRow, CONFIG_TEAM.COL_TH_ASIGNADO).setValue(new Date());
 
     SpreadsheetApp.flush();
 
     // ── Enviar emails ──────────────────────────────────────────
     EmailServiceTeam.send(
-      nombreEquipo, thehiveUrl,
+      thehiveUrl,
       nombreM1, emailM1, centroM1, slotM1, ipM1, confM1,
       nombreM2, emailM2, centroM2, slotM2, ipM2, confM2
     );
@@ -155,17 +152,16 @@ function onFormSubmitTeam(e) {
  */
 function testEnvioEmailTeam() {
   var adminEmail = Session.getActiveUser().getEmail();
-  // values[0] = timestamp, luego los 7 campos del formulario en orden
+  // values[0] = timestamp, luego los 6 campos del formulario en orden
   var fakeEvent = {
     values: [
       new Date().toISOString(),       // 0 timestamp
-      'Equipo de Prueba',             // 1 nombre del equipo
-      'Integrante Uno (test)',        // 2 nombre_m1
-      adminEmail,                     // 3 email_m1
-      'IES Rafael Alberti',           // 4 centro_m1
-      'Integrante Dos (test)',        // 5 nombre_m2
-      adminEmail,                     // 6 email_m2  (mismo email para recibir ambos)
-      'IES Rafael Alberti'            // 7 centro_m2
+      'Integrante Uno (test)',        // 1 nombre_m1
+      adminEmail,                     // 2 email_m1
+      'IES Rafael Alberti',           // 3 centro_m1
+      'Integrante Dos (test)',        // 4 nombre_m2
+      adminEmail,                     // 5 email_m2  (mismo email para recibir ambos)
+      'IES Rafael Alberti'            // 6 centro_m2
     ]
   };
   onFormSubmitTeam(fakeEvent);

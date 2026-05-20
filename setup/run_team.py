@@ -104,6 +104,8 @@ def deploy_team_slots(teams):
 
     out, err, rc = run_cmd('clasp push --force', SCRIPT_TEAM)
     bootstrap.write_text(original, encoding='utf-8')
+    if out:
+        _info(out)
     if rc != 0:
         _err(f'clasp push falló:\n{err}')
         sys.exit(1)
@@ -286,15 +288,18 @@ def main():
         run_cmd('clasp open', SCRIPT_TEAM)
         print(f'\n  {BOLD}➡️  En Apps Script: ejecuta{RST}  setupTeam()')
         _hdr('Página de proyección')
-        gen = _choose('¿Generar la página QR para proyectar?',
-                      [('s', 'Sí'), ('n', 'No, lo haré después')])
-        if gen == 's':
-            form_url = _ask('URL del Google Form').strip()
-            if form_url:
-                out = gen_qr_page(form_url)
-                if out:
-                    _ok(f'Página generada → {out.relative_to(ROOT)}')
-                    webbrowser.open(out.as_uri())
+        try:
+            gen = _choose('¿Generar la página QR para proyectar?',
+                          [('s', 'Sí'), ('n', 'No, lo haré después')])
+            if gen == 's':
+                form_url = _ask('URL del Google Form').strip()
+                if form_url:
+                    out = gen_qr_page(form_url)
+                    if out:
+                        _ok(f'Página generada → {out.relative_to(ROOT)}')
+                        webbrowser.open(out.as_uri())
+        except EOFError:
+            _info('Ejecutado sin terminal interactivo — QR no generado')
         print(f'\n{BOLD}✅ TODO LISTO{RST}\n')
         return
 

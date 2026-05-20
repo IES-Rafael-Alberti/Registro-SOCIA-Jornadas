@@ -9,7 +9,7 @@ var EmailServiceTeam = {
    * Envía un email a cada miembro del equipo con su .conf individual
    * y la URL de TheHive compartida por el equipo.
    */
-  send: function(nombreEquipo, thehiveUrl,
+  send: function(thehiveUrl,
                  nombreM1, emailM1, centroM1, slotM1, ipM1, confM1,
                  nombreM2, emailM2, centroM2, slotM2, ipM2, confM2) {
 
@@ -21,10 +21,10 @@ var EmailServiceTeam = {
     var blob1 = Utilities.newBlob(confM1, 'text/plain', slotM1 + '.conf');
     GmailApp.sendEmail(
       emailM1, subject,
-      EmailServiceTeam._plainText(nombreM1, nombreEquipo, slotM1, ipM1, nombreM2, emailM2, thehiveUrl),
+      EmailServiceTeam._plainText(nombreM1, slotM1, ipM1, nombreM2, emailM2, thehiveUrl),
       {
         name: fromName,
-        htmlBody: EmailServiceTeam._buildHtml(nombreM1, nombreEquipo, centroM1, thehiveUrl,
+        htmlBody: EmailServiceTeam._buildHtml(nombreM1, centroM1, thehiveUrl,
                                               slotM1, ipM1, nombreM2, emailM2),
         attachments: [blob1],
         replyTo: replyTo,
@@ -35,10 +35,10 @@ var EmailServiceTeam = {
     var blob2 = Utilities.newBlob(confM2, 'text/plain', slotM2 + '.conf');
     GmailApp.sendEmail(
       emailM2, subject,
-      EmailServiceTeam._plainText(nombreM2, nombreEquipo, slotM2, ipM2, nombreM1, emailM1, thehiveUrl),
+      EmailServiceTeam._plainText(nombreM2, slotM2, ipM2, nombreM1, emailM1, thehiveUrl),
       {
         name: fromName,
-        htmlBody: EmailServiceTeam._buildHtml(nombreM2, nombreEquipo, centroM2, thehiveUrl,
+        htmlBody: EmailServiceTeam._buildHtml(nombreM2, centroM2, thehiveUrl,
                                               slotM2, ipM2, nombreM1, emailM1),
         attachments: [blob2],
         replyTo: replyTo,
@@ -46,10 +46,9 @@ var EmailServiceTeam = {
     );
   },
 
-  _plainText: function(nombre, nombreEquipo, slot, ip, compNombre, compEmail, thehiveUrl) {
+  _plainText: function(nombre, slot, ip, compNombre, compEmail, thehiveUrl) {
     return (
       'Hola ' + nombre + ',\n\n' +
-      'Equipo: ' + nombreEquipo + '\n' +
       'Tu perfil VPN: ' + slot + ' | IP: ' + ip + '\n' +
       'Tu compañero/a: ' + compNombre + ' (' + compEmail + ')\n\n' +
       'TheHive (acceso de equipo): ' + thehiveUrl + '\n\n' +
@@ -58,7 +57,7 @@ var EmailServiceTeam = {
     );
   },
 
-  _buildHtml: function(nombre, nombreEquipo, centro, thehiveUrl, slot, ip, compNombre, compEmail) {
+  _buildHtml: function(nombre, centro, thehiveUrl, slot, ip, compNombre, compEmail) {
     return '<!DOCTYPE html>' +
 '<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>' +
 '<body style="margin:0;padding:0;background:#e8e8e8;font-family:Arial,Helvetica,sans-serif;">' +
@@ -76,7 +75,6 @@ var EmailServiceTeam = {
 
 '<tr><td style="padding:28px 32px 16px;">' +
 '<p style="font-size:17px;color:#1a1a1a;margin:0 0 6px;"><strong>Hola ' + nombre.split(' ')[0] + ',</strong></p>' +
-'<p style="font-size:14px;color:#888;margin:0 0 10px;">Equipo: <strong style="color:#1a1a1a;">' + nombreEquipo + '</strong></p>' +
 '<p style="color:#555;line-height:1.7;margin:0;font-size:14px;">Tu acceso a la plataforma SOCIA está listo. En este correo encontrarás tu perfil VPN adjunto y las instrucciones para conectarte.</p>' +
 '</td></tr>' +
 

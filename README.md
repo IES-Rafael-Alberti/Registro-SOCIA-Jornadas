@@ -141,7 +141,7 @@ Tras el deploy, abrir Apps Script en el navegador y ejecutar la función de setu
 - Instala el trigger `onFormSubmitTeam`
 - Mueve el spreadsheet y el formulario a la carpeta "VPN Jornadas SOCIA" en Drive
 
-> ⚠️ `setupTeam()` es destructiva: borra y recrea las hojas y el formulario. Pedirá confirmación antes de continuar.
+> ⚠️ `setupTeam()` es destructiva: borra y recrea las hojas y el formulario. Pedirá confirmación si se lanza desde el menú de la hoja de cálculo. Si se ejecuta directamente desde el editor de Apps Script, la confirmación se omite automáticamente.
 
 ### Paso 3 — Proyectar el QR
 
@@ -168,6 +168,34 @@ En ambos modos, si no quedan recursos libres el sistema avisa automáticamente a
 
 ---
 
+## Limpiar perfiles tras la jornada
+
+Al terminar la formación, ejecutar `cleanup.py` para borrar los peers WireGuard de OPNsense:
+
+```bash
+python3 setup/cleanup.py
+```
+
+El script es interactivo:
+
+1. Se conecta a OPNsense
+2. Pregunta qué tipo de perfiles borrar: **individuales** (`alumnoN`), **equipos** (`equipoN_mN`) o **ambos**
+3. Muestra el listado numerado con todos los peers encontrados
+4. Pregunta cuáles eliminar:
+   - **Todos** — borra todos los del tipo seleccionado
+   - **Los primeros N** — borra los N primeros (útil si solo se usaron algunos slots)
+   - **Selección manual** — números o rangos (`1,3,5-8`)
+5. Muestra el resumen y pide confirmación explícita antes de borrar
+6. Borra los peers y aplica `reconfigure` en WireGuard
+
+Para verificar qué se borraría sin modificar nada:
+
+```bash
+python3 setup/cleanup.py --dry-run
+```
+
+---
+
 ## Menú de administración (modo equipos)
 
 El spreadsheet de equipos incluye un menú **⚙️ SOCIA Admin — Equipos** con estas opciones:
@@ -190,11 +218,21 @@ Requiere haber hecho un deploy previo con `python3 setup/run.py` o `python3 setu
 
 ## Solo actualizar el código (sin tocar OPNsense)
 
+**Modo individual:**
+
 ```bash
 python3 setup/deploy.py
 ```
 
-Inyecta el CSV existente en Bootstrap.gs, sube el código a Apps Script y restaura el archivo. Útil para cambios en el email, la configuración o la lógica del script.
+Inyecta el CSV existente en Bootstrap.gs, sube el código a Apps Script y restaura el archivo.
+
+**Modo equipos:**
+
+```bash
+python3 setup/run_team.py --deploy-only
+```
+
+Usa el `slots_team.csv` existente, sube el código a Apps Script y ofrece regenerar la página QR. Útil para cambios en el email, la configuración o la lógica del script sin tocar OPNsense ni regenerar los perfiles VPN.
 
 ---
 
@@ -218,6 +256,7 @@ apps-script-team/               Modo equipos
 setup/
   run.py                        Script maestro interactivo — modo individual
   run_team.py                   Script maestro interactivo — modo equipos
+  cleanup.py                    Limpieza de peers WireGuard tras la jornada
   deploy.py                     Deploy a Apps Script sin tocar OPNsense
   vpn_utils.py                  Utilidades compartidas (OPNsense, UI, crypto)
   setup_opnsense.py             Cliente de la API de OPNsense
@@ -243,7 +282,8 @@ instrucciones/
 Las claves privadas WireGuard y las credenciales de OPNsense **nunca se suben al repositorio**:
 
 - `setup/.env` — credenciales de OPNsense (ignorado por git)
-- `setup/slots_vpn.csv` — claves privadas de los perfiles (ignorado por git)
+- `setup/slots_vpn.csv` — claves privadas de los perfiles individuales (ignorado por git)
+- `setup/slots_team.csv` — claves privadas de los perfiles de equipos (ignorado por git)
 - `.clasp.json` — vinculación a tu cuenta Google (ignorado por git)
 
 El deploy inyecta las claves en Bootstrap.gs solo durante el `clasp push` y las elimina inmediatamente después.
